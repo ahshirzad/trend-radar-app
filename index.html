@@ -136,6 +136,16 @@ input[dir="ltr"]{text-align:left}
 .dchart .track{height:14px;border-radius:7px;background:var(--surface-2);overflow:hidden;direction:rtl}
 .dchart .track i{display:block;height:100%;background:var(--accent);border-radius:7px}
 .dchart .num{color:var(--ink-3);font-variant-numeric:tabular-nums;text-align:left}
+.dh{font-size:15px;margin:18px 0 2px}
+.irow{display:grid;grid-template-columns:minmax(0,1fr) 92px 56px 52px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.irow:last-child{border:0}
+.irow a{color:inherit;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.irow small{display:block;color:var(--ink-3);font-size:11px}
+.irow svg{width:92px;height:26px;display:block}
+.irow .v{text-align:left;font-variant-numeric:tabular-nums;font-weight:700}
+.irow .c{text-align:left;font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:700}
+.up{color:var(--good)} .down{color:var(--hot)} .flat{color:var(--ink-3)}
+.src{display:inline-block;font-size:10px;font-weight:700;border:1px solid var(--line);border-radius:6px;padding:0 4px;margin-inline-start:4px;color:var(--ink-2)}
 .new-dot{display:inline-block;font-size:10px;font-weight:800;color:var(--ever);margin-inline-start:4px}
 .legend{font-size:12px;color:var(--ink-3);margin:6px 0 12px}
 
@@ -235,8 +245,13 @@ a{color:var(--accent)}
 
   <section id="tab-demand" class="tab hidden">
     <h2>تقاضای جست‌وجو</h2>
-    <p class="legend">عبارت‌هایی که مردم در یوتیوب درباره‌ی این دسته جست‌وجو می‌کنند. عدد = چند نوبت این عبارت در پیشنهادهای جست‌وجو دیده شده (هرچه بیشتر، تقاضای پایدارتر). <span class="new-dot">تازه</span> یعنی در ۲۴ ساعت اخیر پیدا شده.</p>
     <div class="chips" id="demCatChips"></div>
+    <h3 class="dh">علاقه‌ی واقعی مردم</h3>
+    <p class="legend">بازدید روزانه‌ی واقعی صفحه‌های ویکی‌پدیای مربوط به این دسته در ۶۰ روز اخیر. عدد = میانگین بازدید روزانه در ۷ روز اخیر؛ درصد = تغییر نسبت به هفته‌ی قبل.</p>
+    <div class="panel" id="interestBox"></div>
+    <h3 class="dh">مردم دقیقاً چه جست‌وجو می‌کنند</h3>
+    <p class="legend">پیشنهادهای جست‌وجوی گوگل و یوتیوب برای کلمه‌های این دسته. هرچه بالاتر در فهرست پیشنهاد باشد (رتبه‌ی ۱ = پرجست‌وجوترین) و در هر دو جا دیده شود، تقاضا بیشتر است. <span class="new-dot">تازه</span> = به‌تازگی وارد پیشنهادها شده.</p>
+    <div class="chips" id="demLangChips"></div>
     <div class="panel" id="demandBox"></div>
   </section>
 
@@ -373,11 +388,12 @@ async function load(){
   if(!state.token){ showSetup(); return; }
   const btn = $("#refreshBtn svg"); btn.classList.add("spin");
   try{
-    const [config, ideas, status, demand, runs, trends] = await Promise.all([
+    const [config, ideas, status, demand, runs, trends, interest] = await Promise.all([
       readJSON("config.json"), readJSON("data/ideas.json"), readJSON("data/status.json"),
-      readJSON("data/demand.json"), readJSON("data/runs.json"), readJSON("data/trends.json").catch(() => null)]);
-    Object.assign(state, {config, ideas, status, demand, runs, trends});
-    LS.set("tr.cache", {config, ideas, status, demand, runs, trends, at: Date.now()});
+      readJSON("data/demand.json"), readJSON("data/runs.json"), readJSON("data/trends.json").catch(() => null),
+      readJSON("data/interest.json").catch(() => null)]);
+    Object.assign(state, {config, ideas, status, demand, runs, trends, interest});
+    LS.set("tr.cache", {config, ideas, status, demand, runs, trends, interest, at: Date.now()});
     hideSetup(); render();
   }catch(e){
     const cache = LS.get("tr.cache", null);
@@ -524,20 +540,46 @@ for(const [id, k] of [["#langFa","fa"],["#langEn","en"]]){
   $(id).addEventListener("change", e => { langPref[k] = e.target.checked; LS.set("tr.langs", langPref); renderTrends(); });
 }
 
+let demLang = "all";
+function spark(vals){
+  const max = Math.max(1, ...vals), n = vals.length;
+  const pts = vals.map((v, i) => `${(i/(n-1)*90+1).toFixed(1)},${(25 - v/max*23).toFixed(1)}`).join(" ");
+  return `<svg viewBox="0 0 92 26" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+}
 function renderDemand(){
-  const cats = (state.config?.categories || []).filter(c => state.demand[c.id]);
-  if(!state.demCat || !state.demand[state.demCat]) state.demCat = cats[0]?.id;
+  const cats = (state.config?.categories || []).filter(c => state.demand[c.id] || state.interest?.cats?.[c.id]);
+  if(!state.demCat || !cats.some(c => c.id === state.demCat)) state.demCat = cats[0]?.id;
   chips($("#demCatChips"), cats.map(c => [c.id, `${esc(c.emoji||"")} ${esc(c.name)}`]), state.demCat, v => { state.demCat = v; renderDemand(); });
+
+  // Real interest: Wikipedia daily pageviews.
+  const topics = state.interest?.cats?.[state.demCat]?.topics || [];
+  const sum = a => a.reduce((x, y) => x + y, 0);
+  const iRows = topics.map(t => {
+    const last = sum(t.daily.slice(-7)), prev = sum(t.daily.slice(-14, -7));
+    return {...t, avg: Math.round(last / 7), ch: prev ? Math.round((last - prev) / prev * 100) : null};
+  }).sort((a, b) => b.avg - a.avg);
+  $("#interestBox").innerHTML = iRows.length ? iRows.map(t => {
+    const cls = t.ch == null || Math.abs(t.ch) < 5 ? "flat" : t.ch > 0 ? "up" : "down";
+    const ch = t.ch == null ? "—" : `${t.ch > 0 ? "▲" : t.ch < 0 ? "▼" : ""}${fa(Math.abs(t.ch))}٪`;
+    return `<div class="irow"><a href="${esc(t.url)}" target="_blank" rel="noopener" dir="auto">${esc(t.title)}<small>ویکی ${t.lang === "fa" ? "فارسی" : "انگلیسی"}</small></a>
+      ${spark(t.daily)}<span class="v">${fa(t.avg)}</span><span class="c ${cls}">${ch}</span></div>`;
+  }).join("") : `<div class="empty" style="padding:16px">از نوبت بعدی رادار اینجا پر می‌شود.</div>`;
+
+  // Search phrases: Google + YouTube autocomplete.
+  chips($("#demLangChips"), [["all","همه"],["fa","فارسی"],["en","انگلیسی"]], demLang, v => { demLang = v; renderDemand(); });
   const d = state.demand[state.demCat];
   const box = $("#demandBox");
   if(!d){ box.innerHTML = `<div class="empty" style="padding:24px">هنوز داده‌ای نیست.</div>`; return; }
-  const rows = Object.entries(d).sort((a,b) => b[1].hits - a[1].hits || a[1].best_rank - b[1].best_rank).slice(0, 20);
-  const max = Math.max(...rows.map(r => r[1].hits));
-  const dayAgo = Date.now() - 864e5;
-  box.innerHTML = `<div class="dchart">${rows.map(([p, v]) => `
-    <span class="lbl" title="${esc(p)}" dir="auto">${esc(p)}${new Date(v.first) > dayAgo ? '<span class="new-dot">تازه</span>' : ""}</span>
-    <span class="track"><i style="width:${Math.max(6, v.hits / max * 100)}%"></i></span>
-    <span class="num">${fa(v.hits)}</span>`).join("")}</div>`;
+  const all = Object.entries(d);
+  const base = Math.min(...all.map(([, v]) => Date.parse(v.first)));
+  const strength = v => (11 - (v.rank || v.best_rank)) / 10 * ((v.src || []).length > 1 ? 1 : 0.75);
+  const rows = all.filter(([p]) => demLang === "all" || (demLang === "en") === /^[\x00-\x7F]+$/.test(p))
+    .sort((a, b) => strength(b[1]) - strength(a[1]) || b[1].hits - a[1].hits).slice(0, 25);
+  const SRC = {g: "گوگل", yt: "یوتیوب"};
+  box.innerHTML = rows.length ? `<div class="dchart">${rows.map(([p, v]) => `
+    <span class="lbl" title="${esc(p)}" dir="auto">${esc(p)}${Date.parse(v.first) > base + 864e5 ? '<span class="new-dot">تازه</span>' : ""}${(v.src || []).map(x => `<span class="src">${SRC[x]}</span>`).join("")}</span>
+    <span class="track"><i style="width:${Math.max(6, strength(v) * 100)}%"></i></span>
+    <span class="num">#${fa(v.rank || v.best_rank)}</span>`).join("")}</div>` : `<div class="sub" style="padding:8px 0">چیزی نیست.</div>`;
 }
 
 function renderCats(){
