@@ -52,6 +52,8 @@ header.top .wrap{display:flex;align-items:center;gap:10px;height:56px}
 header.top h1{font-size:17px;font-weight:800;margin:0;flex:1;display:flex;align-items:center;gap:8px}
 header.top h1 svg{width:24px;height:24px;color:var(--accent)}
 .sub{color:var(--ink-3);font-size:12px}
+header.top h1{white-space:nowrap}
+@media (max-width:440px){#lastRun{display:none}}
 .icon-btn{border:0;background:transparent;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--ink-2)}
 .icon-btn:active{background:var(--surface-2)}
 .icon-btn svg{width:22px;height:22px}
@@ -60,7 +62,7 @@ header.top h1 svg{width:24px;height:24px;color:var(--accent)}
 
 nav.tabs{position:fixed;bottom:0;inset-inline:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);
   padding-bottom:env(safe-area-inset-bottom)}
-nav.tabs .wrap{display:grid;grid-template-columns:repeat(4,1fr);height:64px;padding:0}
+nav.tabs .wrap{display:grid;grid-template-columns:repeat(5,1fr);height:64px;padding:0}
 nav.tabs button{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
   color:var(--ink-3);font-size:12px;font-weight:600}
 nav.tabs button svg{width:22px;height:22px}
@@ -137,6 +139,21 @@ input[dir="ltr"]{text-align:left}
 .new-dot{display:inline-block;font-size:10px;font-weight:800;color:var(--ever);margin-inline-start:4px}
 .legend{font-size:12px;color:var(--ink-3);margin:6px 0 12px}
 
+.langs{display:flex;gap:8px;margin-top:4px}
+.lang-tick{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:7px 12px;font-weight:700;font-size:14px;cursor:pointer}
+.lang-tick input{width:18px;height:18px;accent-color:var(--accent);margin:0}
+.lang-tick:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.ttable{width:100%;border-collapse:collapse;font-size:13.5px}
+.ttable th{font-size:12px;color:var(--ink-3);font-weight:700;text-align:right;padding:4px 6px;border-bottom:1px solid var(--line)}
+.ttable td{padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.ttable tr:last-child td{border-bottom:0}
+.ttable td.n{color:var(--ink-3);width:24px;font-variant-numeric:tabular-nums}
+.ttable td.r{color:var(--ink-3);font-size:12px;white-space:nowrap}
+.ttable td.t a{color:var(--ink);text-decoration:none;overflow-wrap:anywhere}
+.ttable td.v{color:var(--ink-3);font-size:12px;white-space:nowrap;text-align:left}
+.tsrc{display:flex;align-items:center;justify-content:space-between;margin:0 0 6px}
+.tsrc h3{margin:0;font-size:15px}
+.more{border:0;background:none;color:var(--accent);font-weight:700;font-size:13px;padding:8px 0 0}
 .runs{list-style:none;margin:0;padding:0}
 .runs li{padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
 .runs li:last-child{border:0}
@@ -169,6 +186,7 @@ a{color:var(--accent)}
   <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
   <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/></symbol>
   <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
 </svg>
 
@@ -201,6 +219,17 @@ a{color:var(--accent)}
     <div class="chips" id="winChips" aria-label="زمان" style="padding-top:2px"></div>
     <div class="chips" id="stChips" aria-label="وضعیت" style="padding-top:2px"></div>
     <div id="ideaList"></div>
+  </section>
+
+  <section id="tab-trends" class="tab hidden">
+    <h2>ترندهای جهانی</h2>
+    <p class="legend" id="trendsAt"></p>
+    <div class="langs" role="group" aria-label="زبان">
+      <label class="lang-tick"><input type="checkbox" id="langFa"><span>فارسی</span></label>
+      <label class="lang-tick"><input type="checkbox" id="langEn"><span>انگلیسی</span></label>
+    </div>
+    <div class="chips" id="regionChips"></div>
+    <div id="trendTables"></div>
   </section>
 
   <section id="tab-demand" class="tab hidden">
@@ -247,6 +276,7 @@ a{color:var(--accent)}
 <nav class="tabs" id="tabs">
   <div class="wrap" role="tablist">
     <button role="tab" data-tab="ideas" aria-selected="true"><svg><use href="#i-bulb"/></svg>ایده‌ها</button>
+    <button role="tab" data-tab="trends" aria-selected="false"><svg><use href="#i-globe"/></svg>ترندها</button>
     <button role="tab" data-tab="demand" aria-selected="false"><svg><use href="#i-chart"/></svg>تقاضا</button>
     <button role="tab" data-tab="cats" aria-selected="false"><svg><use href="#i-tags"/></svg>دسته‌ها</button>
     <button role="tab" data-tab="settings" aria-selected="false"><svg><use href="#i-gear"/></svg>تنظیمات</button>
@@ -342,11 +372,11 @@ async function load(){
   if(!state.token){ showSetup(); return; }
   const btn = $("#refreshBtn svg"); btn.classList.add("spin");
   try{
-    const [config, ideas, status, demand, runs] = await Promise.all([
+    const [config, ideas, status, demand, runs, trends] = await Promise.all([
       readJSON("config.json"), readJSON("data/ideas.json"), readJSON("data/status.json"),
-      readJSON("data/demand.json"), readJSON("data/runs.json")]);
-    Object.assign(state, {config, ideas, status, demand, runs});
-    LS.set("tr.cache", {config, ideas, status, demand, runs, at: Date.now()});
+      readJSON("data/demand.json"), readJSON("data/runs.json"), readJSON("data/trends.json").catch(() => null)]);
+    Object.assign(state, {config, ideas, status, demand, runs, trends});
+    LS.set("tr.cache", {config, ideas, status, demand, runs, trends, at: Date.now()});
     hideSetup(); render();
   }catch(e){
     const cache = LS.get("tr.cache", null);
@@ -371,7 +401,7 @@ function relTime(iso){
 function render(){
   $("#appName").textContent = state.config?.app_name || "رادار ترند سفارشی";
   $("#lastRun").textContent = state.runs[0] ? `آخرین نوبت: ${relTime(state.runs[0].at)}` : "";
-  renderIdeas(); renderDemand(); renderCats(); renderSettings();
+  renderIdeas(); renderTrends(); renderDemand(); renderCats(); renderSettings();
 }
 function chips(el, items, current, onPick){
   el.innerHTML = items.map(([v, label]) => `<button class="chip" data-v="${esc(v)}" aria-pressed="${v===current}">${label}</button>`).join("");
@@ -453,6 +483,45 @@ async function setStatus(id, s){
     if(prev) state.status[id] = prev; else delete state.status[id];
     renderIdeas(); toast("ذخیره نشد؛ اینترنت را بررسی کنید.");
   }
+}
+
+// ---------- global trends ----------
+const TREND_SOURCES = [["google","گوگل ترندز","traffic"],["x","توییتر / X",""],["youtube","یوتیوب ترند",""],["wikipedia","پربازدیدهای ویکی‌پدیا","views"]];
+const langPref = LS.get("tr.langs", {fa:true, en:true});
+let trendRegion = "all";
+const trendOpen = new Set();
+function langOk(l){
+  // Both ticks on → everything; one tick → only that language; none → nothing.
+  if(langPref.fa && langPref.en) return true;
+  return (langPref.fa && l === "fa") || (langPref.en && l === "en");
+}
+function renderTrends(){
+  $("#langFa").checked = !!langPref.fa; $("#langEn").checked = !!langPref.en;
+  const t = state.trends, box = $("#trendTables");
+  if(!t){ $("#trendsAt").textContent = ""; $("#regionChips").innerHTML = ""; box.innerHTML = `<div class="empty">ترندها از نوبت بعدی رادار اینجا می‌آیند.</div>`; return; }
+  $("#trendsAt").textContent = `به‌روزرسانی: ${relTime(t.at)} · منبع‌ها: Google Trends، trends24 (X)، kworb (YouTube)، Wikimedia`;
+  const regions = [...new Set(Object.values(t.tables).flat().map(r => r.region))];
+  if(trendRegion !== "all" && !regions.includes(trendRegion)) trendRegion = "all";
+  chips($("#regionChips"), [["all","همه‌ی کشورها"], ...regions.map(r => [r, esc(r)])], trendRegion, v => { trendRegion = v; renderTrends(); });
+  box.innerHTML = TREND_SOURCES.map(([key, title, valKey]) => {
+    const rows = (t.tables[key] || []).filter(r => langOk(r.lang) && (trendRegion === "all" || r.region === trendRegion));
+    const shown = trendOpen.has(key) ? rows : rows.slice(0, 10);
+    const val = r => valKey === "views" ? fa(r.views) : valKey === "traffic" ? esc(r.traffic || "") : "";
+    return `<div class="panel">
+      <div class="tsrc"><h3>${title}</h3><span class="sub">${fa(rows.length)} مورد</span></div>
+      ${rows.length ? `<table class="ttable"><thead><tr><th>#</th><th>عنوان</th><th>کشور</th>${valKey ? `<th style="text-align:left">${valKey === "views" ? "بازدید" : "جست‌وجو"}</th>` : ""}</tr></thead><tbody>
+        ${shown.map((r, n) => `<tr><td class="n">${fa(n+1)}</td><td class="t"><a href="${esc(r.url || "#")}" target="_blank" rel="noopener" dir="auto">${esc(r.title)}</a></td><td class="r">${esc(r.region)}</td>${valKey ? `<td class="v">${val(r)}</td>` : ""}</tr>`).join("")}
+      </tbody></table>${rows.length > 10 ? `<button class="more" data-src="${key}">${trendOpen.has(key) ? "کمتر" : `نمایش همه (${fa(rows.length)})`}</button>` : ""}`
+      : `<div class="sub" style="padding:8px 0">با این فیلترها چیزی نیست.</div>`}
+    </div>`;
+  }).join("");
+}
+$("#trendTables").addEventListener("click", e => {
+  const b = e.target.closest(".more"); if(!b) return;
+  trendOpen.has(b.dataset.src) ? trendOpen.delete(b.dataset.src) : trendOpen.add(b.dataset.src); renderTrends();
+});
+for(const [id, k] of [["#langFa","fa"],["#langEn","en"]]){
+  $(id).addEventListener("change", e => { langPref[k] = e.target.checked; LS.set("tr.langs", langPref); renderTrends(); });
 }
 
 function renderDemand(){
