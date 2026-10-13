@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>رادار ترند سفارشی</title>
+<meta name="description" content="ایده‌های محتوای داغ، دسته‌بندی‌شده و امتیازدار">
+<meta name="theme-color" content="#8f2d2d" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17151a" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+<style>
+:root{
+  --bg:#f7f3ee; --surface:#fffdfa; --surface-2:#f1ebe3; --line:#e4dbcf;
+  --ink:#231f1c; --ink-2:#5f5750; --ink-3:#8d847b;
+  --accent:#8f2d2d; --accent-ink:#fff; --accent-soft:#f3e2df;
+  --hot:#c2410c; --rising:#b7791f; --ever:#2f7d5b;
+  --good:#2f7d5b; --mid:#b7791f; --low:#8d847b;
+  --shadow:0 1px 2px rgb(40 30 20 / .06),0 4px 14px rgb(40 30 20 / .06);
+  --radius:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121014; --surface:#1c191f; --surface-2:#252128; --line:#332e36;
+    --ink:#f1ece6; --ink-2:#bdb4ab; --ink-3:#8a8178;
+    --accent:#e07a6d; --accent-ink:#1a0f0e; --accent-soft:#3a2224;
+    --hot:#f08a4b; --rising:#e3b04b; --ever:#5cc296;
+    --good:#5cc296; --mid:#e3b04b; --low:#8a8178;
+    --shadow:0 1px 2px rgb(0 0 0 / .4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121014; --surface:#1c191f; --surface-2:#252128; --line:#332e36;
+  --ink:#f1ece6; --ink-2:#bdb4ab; --ink-3:#8a8178;
+  --accent:#e07a6d; --accent-ink:#1a0f0e; --accent-soft:#3a2224;
+  --hot:#f08a4b; --rising:#e3b04b; --ever:#5cc296;
+  --good:#5cc296; --mid:#e3b04b; --low:#8a8178;
+  --shadow:0 1px 2px rgb(0 0 0 / .4);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Vazirmatn,Tahoma,system-ui,sans-serif;font-size:15px;line-height:1.75;
+  -webkit-tap-highlight-color:transparent;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+header.top .wrap{display:flex;align-items:center;gap:10px;height:56px}
+header.top h1{font-size:17px;font-weight:800;margin:0;flex:1;display:flex;align-items:center;gap:8px}
+header.top h1 svg{width:24px;height:24px;color:var(--accent)}
+.sub{color:var(--ink-3);font-size:12px}
+.icon-btn{border:0;background:transparent;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--ink-2)}
+.icon-btn:active{background:var(--surface-2)}
+.icon-btn svg{width:22px;height:22px}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+nav.tabs{position:fixed;bottom:0;inset-inline:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs .wrap{display:grid;grid-template-columns:repeat(4,1fr);height:64px;padding:0}
+nav.tabs button{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  color:var(--ink-3);font-size:12px;font-weight:600}
+nav.tabs button svg{width:22px;height:22px}
+nav.tabs button[aria-selected="true"]{color:var(--accent)}
+
+.chips{display:flex;gap:6px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--ink-2);white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.row-label{font-size:12px;color:var(--ink-3);margin-top:6px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin:12px 0;overflow:hidden}
+.idea-head{display:flex;gap:12px;padding:14px 14px 10px;align-items:flex-start;border:0;background:none;width:100%;text-align:right}
+.score{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:16px;
+  background:conic-gradient(var(--c) calc(var(--p)*1%),var(--surface-2) 0);position:relative}
+.score::before{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--surface)}
+.score span{position:relative}
+.idea-title{font-weight:800;font-size:16px;line-height:1.6;margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;font-size:12px;color:var(--ink-3);align-items:center}
+.tag{border-radius:6px;padding:0 7px;font-weight:600;font-size:12px;background:var(--surface-2);color:var(--ink-2)}
+.tag.hot{background:color-mix(in srgb,var(--hot) 15%,transparent);color:var(--hot)}
+.tag.rising{background:color-mix(in srgb,var(--rising) 16%,transparent);color:var(--rising)}
+.tag.evergreen{background:color-mix(in srgb,var(--ever) 15%,transparent);color:var(--ever)}
+.tag.status{background:var(--accent-soft);color:var(--accent)}
+.why{padding:0 14px 12px;color:var(--ink-2);font-size:14px}
+.detail{padding:0 14px 6px;border-top:1px dashed var(--line)}
+.detail dl{margin:10px 0}
+.detail dt{font-size:12px;color:var(--ink-3);font-weight:700;margin-top:10px}
+.detail dd{margin:2px 0 0}
+.hook{font-weight:700;border-inline-start:3px solid var(--accent);padding-inline-start:10px}
+.detail ol{margin:4px 0 0;padding-inline-start:22px;list-style:persian}
+.warn{background:color-mix(in srgb,var(--mid) 14%,transparent);color:var(--ink);border-radius:10px;padding:8px 10px;font-size:13px;margin-top:10px}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:4px 8px;align-items:center;font-size:12px;margin-top:6px}
+.bar{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.actions{display:flex;gap:6px;padding:10px 14px 14px;flex-wrap:wrap;align-items:center}
+.seg{display:flex;background:var(--surface-2);border-radius:12px;padding:3px;gap:2px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+.seg button{flex:1;border:0;background:none;border-radius:9px;padding:6px 8px;font-size:12.5px;font-weight:600;color:var(--ink-2);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--accent);box-shadow:var(--shadow)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 14px;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--ink-2)}
+.btn.danger{color:#c0392b}
+.btn:disabled{opacity:.5}
+.btn svg{width:18px;height:18px}
+
+.empty{text-align:center;color:var(--ink-3);padding:48px 16px}
+.empty svg{width:56px;height:56px;color:var(--line)}
+h2{font-size:15px;margin:20px 0 4px;font-weight:800}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin:12px 0}
+label.f{display:block;margin-top:12px;font-size:13px;font-weight:700;color:var(--ink-2)}
+label.f small{font-weight:400;color:var(--ink-3)}
+input.in,textarea.in,select.in{width:100%;margin-top:4px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 11px;outline:none}
+input.in:focus,textarea.in:focus{border-color:var(--accent)}
+textarea.in{min-height:84px;resize:vertical;line-height:1.7}
+input[dir="ltr"]{text-align:left}
+.switch{position:relative;width:46px;height:28px;flex:none}
+.switch input{opacity:0;width:0;height:0;position:absolute}
+.switch span{position:absolute;inset:0;background:var(--line);border-radius:999px;transition:.2s}
+.switch span::after{content:"";position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgb(0 0 0/.2)}
+.switch input:checked+span{background:var(--good)}
+.switch input:checked+span::after{transform:translateX(-18px)}
+.cat-row{display:flex;align-items:center;gap:12px}
+.cat-row .emoji{font-size:26px;width:44px;height:44px;border-radius:12px;background:var(--surface-2);display:grid;place-items:center;flex:none}
+.cat-row .nm{flex:1;min-width:0}
+.cat-row .nm b{display:block}
+.cat-row .nm small{color:var(--ink-3);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.dchart{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 34px;gap:8px 10px;align-items:center;font-size:13.5px}
+.dchart .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dchart .track{height:14px;border-radius:7px;background:var(--surface-2);overflow:hidden;direction:rtl}
+.dchart .track i{display:block;height:100%;background:var(--accent);border-radius:7px}
+.dchart .num{color:var(--ink-3);font-variant-numeric:tabular-nums;text-align:left}
+.new-dot{display:inline-block;font-size:10px;font-weight:800;color:var(--ever);margin-inline-start:4px}
+.legend{font-size:12px;color:var(--ink-3);margin:6px 0 12px}
+
+.runs{list-style:none;margin:0;padding:0}
+.runs li{padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.runs li:last-child{border:0}
+.runs b{font-variant-numeric:tabular-nums}
+
+.toast{position:fixed;bottom:calc(84px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);opacity:0;
+  background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:12px;font-size:14px;transition:.25s;z-index:20;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.banner{background:var(--accent-soft);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:13px;margin-top:12px}
+dialog{border:0;border-radius:20px;padding:0;background:var(--surface);color:var(--ink);width:min(560px,calc(100% - 24px));max-height:88vh}
+dialog::backdrop{background:rgb(0 0 0/.45)}
+dialog form{padding:16px 16px 12px}
+dialog h3{margin:0 0 4px;font-size:17px}
+.dlg-actions{display:flex;gap:8px;justify-content:space-between;margin-top:16px;position:sticky;bottom:0;background:var(--surface);padding-top:8px}
+.range-row{display:flex;align-items:center;gap:10px}
+.range-row input{flex:1;accent-color:var(--accent)}
+.range-row b{width:32px;text-align:center}
+.hidden{display:none!important}
+.setup{max-width:480px;margin:32px auto}
+.setup ol{padding-inline-start:20px;color:var(--ink-2);font-size:14px}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-radar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><path d="M12 12 18.5 5.5"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20h16M7 16V9M12 16V5M17 16v-4"/></symbol>
+  <symbol id="i-tags" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l9 9-8 8z"/><circle cx="7.5" cy="8.5" r="1.3" fill="currentColor"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <h1><svg><use href="#i-radar"/></svg><span id="appName">رادار ترند سفارشی</span></h1>
+    <span class="sub" id="lastRun"></span>
+    <button class="icon-btn" id="refreshBtn" aria-label="به‌روزرسانی"><svg><use href="#i-refresh"/></svg></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="setup" class="setup hidden">
+    <div class="panel">
+      <h2 style="margin-top:0">اتصال به رادار</h2>
+      <p class="sub" style="font-size:14px">ایده‌ها در یک مخزن خصوصی ذخیره می‌شوند. برای دیدنشان، یک بار «کلید دسترسی» را وارد کنید. کلید فقط روی همین گوشی می‌ماند.</p>
+      <label class="f">کلید دسترسی (Token)
+        <input class="in" id="tokenIn" dir="ltr" type="password" autocomplete="off" placeholder="github_pat_...">
+      </label>
+      <label class="f">مخزن <small>(معمولاً لازم نیست عوض شود)</small>
+        <input class="in" id="repoIn" dir="ltr" autocomplete="off">
+      </label>
+      <div style="margin-top:16px;display:flex;gap:8px"><button class="btn primary" id="connectBtn">اتصال</button></div>
+      <div class="banner hidden" id="setupErr"></div>
+    </div>
+  </section>
+
+  <section id="tab-ideas" class="tab">
+    <div class="chips" id="catChips" aria-label="دسته"></div>
+    <div class="chips" id="winChips" aria-label="زمان" style="padding-top:2px"></div>
+    <div class="chips" id="stChips" aria-label="وضعیت" style="padding-top:2px"></div>
+    <div id="ideaList"></div>
+  </section>
+
+  <section id="tab-demand" class="tab hidden">
+    <h2>تقاضای جست‌وجو</h2>
+    <p class="legend">عبارت‌هایی که مردم در یوتیوب درباره‌ی این دسته جست‌وجو می‌کنند. عدد = چند نوبت این عبارت در پیشنهادهای جست‌وجو دیده شده (هرچه بیشتر، تقاضای پایدارتر). <span class="new-dot">تازه</span> یعنی در ۲۴ ساعت اخیر پیدا شده.</p>
+    <div class="chips" id="demCatChips"></div>
+    <div class="panel" id="demandBox"></div>
+  </section>
+
+  <section id="tab-cats" class="tab hidden">
+    <h2>دسته‌ها</h2>
+    <p class="legend">رادار هر نوبت فقط برای دسته‌های روشن ایده می‌سازد. تغییرات از نوبت بعدی اعمال می‌شود.</p>
+    <div id="catList"></div>
+    <button class="btn primary" id="addCatBtn" style="margin:4px 0 20px"><svg><use href="#i-plus"/></svg>دسته‌ی جدید</button>
+  </section>
+
+  <section id="tab-settings" class="tab hidden">
+    <h2>قواعد کلی</h2>
+    <div class="panel">
+      <label class="f">موضوع‌هایی که هرگز ایده نشوند <small>(هر خط یک قاعده)</small>
+        <textarea class="in" id="rulesIn" style="min-height:140px"></textarea>
+      </label>
+      <label class="f">حداکثر ایده‌ی ترند در هر نوبت
+        <div class="range-row"><input type="range" id="maxIn" min="1" max="10"><b id="maxOut"></b></div>
+      </label>
+      <label class="f">حداقل امتیاز برای پیام تلگرام
+        <div class="range-row"><input type="range" id="tgIn" min="40" max="95" step="5"><b id="tgOut"></b></div>
+      </label>
+      <div style="margin-top:14px"><button class="btn primary" id="saveRulesBtn">ذخیره</button></div>
+    </div>
+    <h2>نوبت‌های اخیر رادار</h2>
+    <div class="panel"><ul class="runs" id="runList"></ul></div>
+    <h2>اتصال</h2>
+    <div class="panel">
+      <div class="sub" style="font-size:13px" id="connInfo"></div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="themeBtn">تغییر حالت روشن/تاریک</button>
+        <button class="btn danger" id="logoutBtn">حذف کلید از این گوشی</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav class="tabs" id="tabs">
+  <div class="wrap" role="tablist">
+    <button role="tab" data-tab="ideas" aria-selected="true"><svg><use href="#i-bulb"/></svg>ایده‌ها</button>
+    <button role="tab" data-tab="demand" aria-selected="false"><svg><use href="#i-chart"/></svg>تقاضا</button>
+    <button role="tab" data-tab="cats" aria-selected="false"><svg><use href="#i-tags"/></svg>دسته‌ها</button>
+    <button role="tab" data-tab="settings" aria-selected="false"><svg><use href="#i-gear"/></svg>تنظیمات</button>
+  </div>
+</nav>
+
+<dialog id="catDlg">
+  <form method="dialog" id="catForm">
+    <h3 id="catDlgTitle">ویرایش دسته</h3>
+    <div style="display:grid;grid-template-columns:70px 1fr;gap:8px">
+      <label class="f">نماد<input class="in" name="emoji" maxlength="4" style="text-align:center;font-size:20px"></label>
+      <label class="f">نام دسته<input class="in" name="name" required></label>
+    </div>
+    <label class="f">این دسته درباره‌ی چیست؟ <small>(به رادار می‌گوید از چه زاویه‌ای ایده بسازد)</small>
+      <textarea class="in" name="description"></textarea></label>
+    <label class="f">زاویه‌ها و مسیرهای ارتباط <small>(اختیاری)</small>
+      <textarea class="in" name="angles"></textarea></label>
+    <label class="f">کلمه‌های جست‌وجو برای سنجش تقاضا <small>(هر خط یک عبارت؛ فارسی یا انگلیسی)</small>
+      <textarea class="in" name="seeds" style="min-height:120px"></textarea></label>
+    <label class="f">حداقل امتیاز ایده
+      <div class="range-row"><input type="range" name="min_score" min="40" max="95" step="5"><b id="minOut"></b></div></label>
+    <div class="dlg-actions">
+      <button type="button" class="btn danger" id="delCatBtn">حذف دسته</button>
+      <span style="display:flex;gap:8px">
+        <button type="button" class="btn ghost" id="cancelCatBtn">انصراف</button>
+        <button type="submit" class="btn primary">ذخیره</button>
+      </span>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const DEFAULT_REPO = "amiirghorbanpur-ship-it/trend-radar";
+const LS = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); }catch{ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} },
+  del(k){ try{ localStorage.removeItem(k); }catch{} },
+};
+const STATUSES = [
+  ["new","جدید"],["saved","ذخیره"],["doing","در حال ساخت"],["published","منتشر شد"],["rejected","رد شد"],
+];
+const STATUS_NAME = Object.fromEntries(STATUSES);
+const WINDOWS = {hot:"🔥 همین امروز", rising:"🟠 رو به رشد", evergreen:"🟢 همیشه‌سبز"};
+const KINDS = {share:"📩 فرستاده‌شده", morning:"☀️ خلاصه‌ی صبح"};
+const SCORE_NAMES = {relevance:"ارتباط", heat:"داغی", story:"داستان", visual:"تصویر", novelty:"تازگی"};
+const fa = n => Number(n).toLocaleString("fa-IR");
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+let state = {
+  token: LS.get("tr.token", ""), repo: LS.get("tr.repo", DEFAULT_REPO),
+  config: null, ideas: [], status: {}, demand: {}, runs: [],
+  shas: {}, // sha of files we may write
+  f: LS.get("tr.filters", {cat:"all", win:"all", st:"open"}),
+  demCat: null, open: new Set(), editing: null,
+};
+
+// ---------- GitHub contents API ----------
+function b64encode(str){ const bytes = new TextEncoder().encode(str); let bin=""; bytes.forEach(b=>bin+=String.fromCharCode(b)); return btoa(bin); }
+function b64decode(b64){ const bin = atob(b64.replace(/\n/g,"")); return new TextDecoder().decode(Uint8Array.from(bin, c=>c.charCodeAt(0))); }
+async function gh(path, opts={}){
+  const r = await fetch(`https://api.github.com/repos/${state.repo}/contents/${path}`, {
+    ...opts, cache:"no-store",
+    headers:{Authorization:`Bearer ${state.token}`, Accept: opts.raw ? "application/vnd.github.raw+json" : "application/vnd.github+json",
+             "X-GitHub-Api-Version":"2022-11-28", ...(opts.headers||{})},
+  });
+  if(!r.ok){ const e = new Error(`GitHub ${r.status}`); e.status = r.status; throw e; }
+  return opts.raw ? r.text() : r.json();
+}
+async function readJSON(path, withSha){
+  if(withSha){ const j = await gh(path); state.shas[path] = j.sha; return JSON.parse(b64decode(j.content)); }
+  return JSON.parse(await gh(path, {raw:true}));
+}
+// Read-modify-write with retry: the radar may push at the same moment.
+async function updateJSON(path, mutate, message){
+  for(let attempt=0; attempt<3; attempt++){
+    const current = await readJSON(path, true);
+    const next = mutate(current);
+    try{
+      const res = await gh(path, {method:"PUT", body: JSON.stringify({
+        message, content: b64encode(JSON.stringify(next, null, 1) + "\n"), sha: state.shas[path], branch:"main"})});
+      state.shas[path] = res.content.sha;
+      return next;
+    }catch(e){ if(e.status !== 409 && e.status !== 422) throw e; }
+  }
+  throw new Error("conflict");
+}
+
+// ---------- load ----------
+async function load(){
+  if(!state.token){ showSetup(); return; }
+  const btn = $("#refreshBtn svg"); btn.classList.add("spin");
+  try{
+    const [config, ideas, status, demand, runs] = await Promise.all([
+      readJSON("config.json"), readJSON("data/ideas.json"), readJSON("data/status.json"),
+      readJSON("data/demand.json"), readJSON("data/runs.json")]);
+    Object.assign(state, {config, ideas, status, demand, runs});
+    LS.set("tr.cache", {config, ideas, status, demand, runs, at: Date.now()});
+    hideSetup(); render();
+  }catch(e){
+    const cache = LS.get("tr.cache", null);
+    if(e.status === 401 || e.status === 403 || e.status === 404){
+      showSetup(e.status === 404 ? "مخزن پیدا نشد یا کلید به آن دسترسی ندارد." : "کلید دسترسی معتبر نیست یا منقضی شده.");
+    }else if(cache){
+      Object.assign(state, cache); hideSetup(); render(); toast("اتصال برقرار نشد؛ آخرین داده‌ی ذخیره‌شده نمایش داده شد.");
+    }else{ showSetup("اتصال به GitHub برقرار نشد. اینترنت را بررسی کنید."); }
+  }finally{ btn.classList.remove("spin"); }
+}
+
+// ---------- render ----------
+function catOf(id){ return state.config?.categories.find(c => c.id === id) || {id, name:id, emoji:"•"}; }
+function stOf(id){ return state.status[id]?.s || "new"; }
+function relTime(iso){
+  const d = new Date(iso), m = Math.round((Date.now() - d) / 60000);
+  if(m < 1) return "همین الان";
+  if(m < 60) return `${fa(m)} دقیقه پیش`;
+  const h = Math.round(m/60); if(h < 24) return `${fa(h)} ساعت پیش`;
+  const dd = Math.round(h/24); return dd < 30 ? `${fa(dd)} روز پیش` : d.toLocaleDateString("fa-IR");
+}
+function render(){
+  $("#appName").textContent = state.config?.app_name || "رادار ترند سفارشی";
+  $("#lastRun").textContent = state.runs[0] ? `آخرین نوبت: ${relTime(state.runs[0].at)}` : "";
+  renderIdeas(); renderDemand(); renderCats(); renderSettings();
+}
+function chips(el, items, current, onPick){
+  el.innerHTML = items.map(([v, label]) => `<button class="chip" data-v="${esc(v)}" aria-pressed="${v===current}">${label}</button>`).join("");
+  el.onclick = e => { const b = e.target.closest(".chip"); if(b) onPick(b.dataset.v); };
+}
+function setFilter(k, v){ state.f[k] = v; LS.set("tr.filters", state.f); renderIdeas(); }
+function renderIdeas(){
+  const cats = state.config?.categories || [];
+  const count = s => state.ideas.filter(i => stOf(i.id) === s).length;
+  chips($("#catChips"), [["all","همه‌ی دسته‌ها"], ...cats.map(c => [c.id, `${esc(c.emoji||"")} ${esc(c.name)}`])], state.f.cat, v => setFilter("cat", v));
+  chips($("#winChips"), [["all","هر زمان"], ...Object.entries(WINDOWS)], state.f.win, v => setFilter("win", v));
+  chips($("#stChips"), [["open","در جریان"], ...STATUSES.map(([k,l]) => [k, `${l} ${count(k) ? "· "+fa(count(k)) : ""}`]), ["all","همه"]], state.f.st, v => setFilter("st", v));
+
+  const list = state.ideas.filter(i =>
+    (state.f.cat === "all" || i.category === state.f.cat) &&
+    (state.f.win === "all" || i.window === state.f.win) &&
+    (state.f.st === "all" || (state.f.st === "open" ? !["published","rejected"].includes(stOf(i.id)) : stOf(i.id) === state.f.st)));
+  const box = $("#ideaList");
+  if(!list.length){
+    box.innerHTML = `<div class="empty"><svg><use href="#i-radar"/></svg><p>${state.ideas.length ? "با این فیلترها ایده‌ای نیست." : "هنوز ایده‌ای ثبت نشده. رادار هر ۳ ساعت سر می‌زند."}</p></div>`;
+    return;
+  }
+  box.innerHTML = list.map(ideaCard).join("");
+}
+function scoreColor(s){ return s >= 80 ? "var(--good)" : s >= 70 ? "var(--mid)" : "var(--low)"; }
+function ideaCard(i){
+  const c = catOf(i.category), st = stOf(i.id), open = state.open.has(i.id);
+  const kind = KINDS[i.kind] ? `<span class="tag">${KINDS[i.kind]}</span>` : "";
+  const scoreBars = Object.entries(SCORE_NAMES).map(([k,l]) =>
+    `<span>${l}</span><span class="bar"><i style="width:${(i.scores?.[k]||0)*10}%"></i></span><span>${fa(i.scores?.[k]||0)}</span>`).join("");
+  return `<article class="card" data-id="${i.id}">
+    <button class="idea-head" data-act="toggle" aria-expanded="${open}">
+      <span class="score" style="--p:${i.score};--c:${scoreColor(i.score)}"><span>${fa(i.score)}</span></span>
+      <span style="flex:1;min-width:0">
+        <h3 class="idea-title">${esc(i.title)}</h3>
+        <span class="meta">
+          <span class="tag ${i.window}">${WINDOWS[i.window] || ""}</span>
+          <span class="tag">${esc(c.emoji||"")} ${esc(c.name)}</span>${kind}
+          ${st !== "new" ? `<span class="tag status">${STATUS_NAME[st]}</span>` : ""}
+          <span>${relTime(i.created_at)}</span>
+        </span>
+      </span>
+    </button>
+    <div class="why">${esc(i.why_now)}</div>
+    ${open ? `<div class="detail"><dl>
+      ${i.hook ? `<dt>هوک (جمله‌ی اول)</dt><dd class="hook">«${esc(i.hook)}»</dd>` : ""}
+      ${i.story?.length ? `<dt>داستان</dt><dd><ol>${i.story.map(s => `<li>${esc(s)}</li>`).join("")}</ol></dd>` : ""}
+      ${i.path ? `<dt>مسیر</dt><dd>${esc(i.path)}</dd>` : ""}
+      ${i.visual ? `<dt>تصویر پیشنهادی</dt><dd>${esc(i.visual)}</dd>` : ""}
+      ${i.source_url ? `<dt>منبع</dt><dd><a href="${esc(i.source_url)}" target="_blank" rel="noopener">باز کردن لینک</a></dd>` : ""}
+      <dt>جزئیات امتیاز</dt><dd><div class="bars">${scoreBars}</div></dd>
+    </dl>${i.warning ? `<div class="warn">⚠️ ${esc(i.warning)}</div>` : ""}</div>` : ""}
+    <div class="actions">
+      <div class="seg" role="group" aria-label="وضعیت">${STATUSES.map(([k,l]) =>
+        `<button data-act="status" data-s="${k}" aria-pressed="${k===st}">${l}</button>`).join("")}</div>
+      ${open ? `<button class="btn ghost" data-act="copy" aria-label="کپی متن"><svg><use href="#i-copy"/></svg>کپی</button>` : ""}
+    </div>
+  </article>`;
+}
+$("#ideaList").addEventListener("click", async e => {
+  const b = e.target.closest("[data-act]"); if(!b) return;
+  const id = b.closest(".card").dataset.id, idea = state.ideas.find(i => i.id === id);
+  if(b.dataset.act === "toggle"){ state.open.has(id) ? state.open.delete(id) : state.open.add(id); renderIdeas(); }
+  if(b.dataset.act === "copy"){
+    const t = [idea.title, idea.hook && `هوک: «${idea.hook}»`, ...(idea.story||[]).map((s,n) => `${fa(n+1)}) ${s}`),
+               idea.visual && `تصویر: ${idea.visual}`, idea.warning && `⚠️ ${idea.warning}`].filter(Boolean).join("\n");
+    try{ await navigator.clipboard.writeText(t); toast("متن ایده کپی شد"); }catch{ toast("کپی ممکن نشد"); }
+  }
+  if(b.dataset.act === "status") setStatus(id, b.dataset.s);
+});
+async function setStatus(id, s){
+  const prev = state.status[id];
+  state.status[id] = {s, t: new Date().toISOString()}; renderIdeas();
+  try{
+    state.status = await updateJSON("data/status.json", cur => { cur[id] = {s, t: new Date().toISOString()}; return cur; }, `status: ${id} → ${s}`);
+    LS.set("tr.cache", {...LS.get("tr.cache", {}), status: state.status});
+    toast(`وضعیت: ${STATUS_NAME[s]}`); renderIdeas();
+  }catch(e){
+    if(prev) state.status[id] = prev; else delete state.status[id];
+    renderIdeas(); toast("ذخیره نشد؛ اینترنت را بررسی کنید.");
+  }
+}
+
+function renderDemand(){
+  const cats = (state.config?.categories || []).filter(c => state.demand[c.id]);
+  if(!state.demCat || !state.demand[state.demCat]) state.demCat = cats[0]?.id;
+  chips($("#demCatChips"), cats.map(c => [c.id, `${esc(c.emoji||"")} ${esc(c.name)}`]), state.demCat, v => { state.demCat = v; renderDemand(); });
+  const d = state.demand[state.demCat];
+  const box = $("#demandBox");
+  if(!d){ box.innerHTML = `<div class="empty" style="padding:24px">هنوز داده‌ای نیست.</div>`; return; }
+  const rows = Object.entries(d).sort((a,b) => b[1].hits - a[1].hits || a[1].best_rank - b[1].best_rank).slice(0, 20);
+  const max = Math.max(...rows.map(r => r[1].hits));
+  const dayAgo = Date.now() - 864e5;
+  box.innerHTML = `<div class="dchart">${rows.map(([p, v]) => `
+    <span class="lbl" title="${esc(p)}" dir="auto">${esc(p)}${new Date(v.first) > dayAgo ? '<span class="new-dot">تازه</span>' : ""}</span>
+    <span class="track"><i style="width:${Math.max(6, v.hits / max * 100)}%"></i></span>
+    <span class="num">${fa(v.hits)}</span>`).join("")}</div>`;
+}
+
+function renderCats(){
+  const cats = state.config?.categories || [];
+  $("#catList").innerHTML = cats.map(c => `
+    <div class="panel cat-row" data-id="${esc(c.id)}">
+      <span class="emoji">${esc(c.emoji || "•")}</span>
+      <button class="nm" data-act="edit" style="border:0;background:none;text-align:right;padding:0">
+        <b>${esc(c.name)}</b><small>${fa((c.seeds||[]).length)} کلمه‌ی جست‌وجو · حداقل امتیاز ${fa(c.min_score ?? 70)} · ${esc(c.description || "")}</small>
+      </button>
+      <label class="switch" aria-label="روشن/خاموش"><input type="checkbox" data-act="active" ${c.active !== false ? "checked" : ""}><span></span></label>
+    </div>`).join("") || `<div class="empty">هیچ دسته‌ای نیست.</div>`;
+}
+$("#catList").addEventListener("click", e => {
+  const b = e.target.closest("[data-act='edit']"); if(b) openCat(b.closest(".cat-row").dataset.id);
+});
+$("#catList").addEventListener("change", e => {
+  if(e.target.dataset.act !== "active") return;
+  const id = e.target.closest(".cat-row").dataset.id, on = e.target.checked;
+  saveConfig(cfg => { const c = cfg.categories.find(x => x.id === id); if(c) c.active = on; return cfg; }, on ? "دسته روشن شد" : "دسته خاموش شد");
+});
+async function saveConfig(mutate, okMsg){
+  try{
+    state.config = await updateJSON("config.json", mutate, "app: edit config");
+    LS.set("tr.cache", {...LS.get("tr.cache", {}), config: state.config});
+    toast(okMsg); render();
+  }catch(e){ toast("ذخیره نشد؛ دوباره امتحان کنید."); render(); }
+}
+const dlg = $("#catDlg"), form = $("#catForm");
+form.min_score.oninput = () => $("#minOut").textContent = fa(form.min_score.value);
+function openCat(id){
+  const c = id ? catOf(id) : {emoji:"✨", name:"", description:"", angles:"", seeds:[], min_score:70, active:true};
+  state.editing = id || null;
+  $("#catDlgTitle").textContent = id ? "ویرایش دسته" : "دسته‌ی جدید";
+  $("#delCatBtn").classList.toggle("hidden", !id);
+  form.emoji.value = c.emoji || ""; form.name.value = c.name || ""; form.description.value = c.description || "";
+  form.angles.value = c.angles || ""; form.seeds.value = (c.seeds || []).join("\n");
+  form.min_score.value = c.min_score ?? 70; form.min_score.oninput();
+  dlg.showModal();
+}
+$("#addCatBtn").onclick = () => openCat(null);
+$("#cancelCatBtn").onclick = () => dlg.close();
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  const data = {
+    emoji: form.emoji.value.trim() || "•", name: form.name.value.trim(), description: form.description.value.trim(),
+    angles: form.angles.value.trim(), min_score: Number(form.min_score.value),
+    seeds: form.seeds.value.split("\n").map(s => s.trim()).filter(Boolean).slice(0, 30),
+  };
+  if(!data.name) return;
+  const id = state.editing;
+  dlg.close();
+  saveConfig(cfg => {
+    if(id){ Object.assign(cfg.categories.find(x => x.id === id), data); }
+    else cfg.categories.push({id: "c" + Date.now().toString(36), active: true, ...data});
+    return cfg;
+  }, id ? "دسته ذخیره شد" : "دسته اضافه شد");
+});
+$("#delCatBtn").onclick = () => {
+  const id = state.editing; if(!id) return;
+  if(!confirm(`دسته‌ی «${catOf(id).name}» حذف شود؟ ایده‌های قبلی‌اش می‌مانند.`)) return;
+  dlg.close();
+  saveConfig(cfg => { cfg.categories = cfg.categories.filter(x => x.id !== id); return cfg; }, "دسته حذف شد");
+};
+
+function renderSettings(){
+  const r = state.config?.rules || {};
+  $("#rulesIn").value = (r.exclude || []).join("\n");
+  $("#maxIn").value = r.max_ideas_per_run ?? 4; $("#maxOut").textContent = fa($("#maxIn").value);
+  $("#tgIn").value = r.telegram_min_score ?? 70; $("#tgOut").textContent = fa($("#tgIn").value);
+  $("#runList").innerHTML = state.runs.slice(0, 12).map(x =>
+    `<li><b>${new Date(x.at).toLocaleString("fa-IR", {weekday:"short", hour:"2-digit", minute:"2-digit"})}</b> · ${fa(x.added)} ایده${x.note ? ` · <span class="sub">${esc(x.note)}</span>` : ""}${x.errors?.length ? ` · <span style="color:#c0392b">خطا در ${fa(x.errors.length)} منبع</span>` : ""}</li>`).join("")
+    || `<li class="sub">هنوز نوبتی ثبت نشده.</li>`;
+  $("#connInfo").textContent = `مخزن: ${state.repo}`;
+}
+$("#maxIn").oninput = () => $("#maxOut").textContent = fa($("#maxIn").value);
+$("#tgIn").oninput = () => $("#tgOut").textContent = fa($("#tgIn").value);
+$("#saveRulesBtn").onclick = () => saveConfig(cfg => {
+  cfg.rules = {...cfg.rules, exclude: $("#rulesIn").value.split("\n").map(s => s.trim()).filter(Boolean),
+               max_ideas_per_run: Number($("#maxIn").value), telegram_min_score: Number($("#tgIn").value)};
+  return cfg;
+}, "قواعد ذخیره شد");
+
+// ---------- setup / chrome ----------
+function showSetup(err){
+  $("#setup").classList.remove("hidden");
+  document.querySelectorAll(".tab").forEach(t => t.classList.add("hidden"));
+  $("#tabs").classList.add("hidden");
+  $("#repoIn").value = state.repo;
+  $("#setupErr").textContent = err || ""; $("#setupErr").classList.toggle("hidden", !err);
+}
+function hideSetup(){
+  if($("#setup").classList.contains("hidden")) return;
+  $("#setup").classList.add("hidden"); $("#tabs").classList.remove("hidden"); showTab(LS.get("tr.tab", "ideas"));
+}
+$("#connectBtn").onclick = () => {
+  state.token = $("#tokenIn").value.trim(); state.repo = $("#repoIn").value.trim() || DEFAULT_REPO;
+  if(!state.token) return;
+  LS.set("tr.token", state.token); LS.set("tr.repo", state.repo); load();
+};
+$("#logoutBtn").onclick = () => {
+  if(!confirm("کلید از این گوشی پاک شود؟")) return;
+  LS.del("tr.token"); LS.del("tr.cache"); state.token = ""; showSetup();
+};
+$("#themeBtn").onclick = () => {
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  const cur = document.documentElement.dataset.theme || (dark ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next; LS.set("tr.theme", next);
+};
+if(LS.get("tr.theme", null)) document.documentElement.dataset.theme = LS.get("tr.theme");
+function showTab(name){
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("hidden", t.id !== "tab-" + name));
+  document.querySelectorAll("#tabs [role=tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === name));
+  LS.set("tr.tab", name); scrollTo(0, 0);
+}
+$("#tabs").onclick = e => { const b = e.target.closest("[data-tab]"); if(b) showTab(b.dataset.tab); };
+$("#refreshBtn").onclick = load;
+let toastT;
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2400); }
+document.addEventListener("visibilitychange", () => { if(document.visibilityState === "visible" && state.token) load(); });
+
+// Show cached data instantly, then refresh.
+const cached = LS.get("tr.cache", null);
+if(state.token && cached){ Object.assign(state, cached); hideSetup(); $("#tabs").classList.remove("hidden"); showTab(LS.get("tr.tab","ideas")); render(); }
+showTab(LS.get("tr.tab", "ideas"));
+load();
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>
