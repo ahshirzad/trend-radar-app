@@ -492,8 +492,7 @@ const langPref = LS.get("tr.langs", {fa:true, en:true});
 let trendRegion = "all";
 const trendOpen = new Set();
 function langOk(l){
-  // Both ticks on → everything; one tick → only that language; none → nothing.
-  if(langPref.fa && langPref.en) return true;
+  // Only Persian and English trends exist; each tick shows its own language.
   return (langPref.fa && l === "fa") || (langPref.en && l === "en");
 }
 function renderTrends(){
