@@ -136,6 +136,17 @@ input[dir="ltr"]{text-align:left}
 .dchart .track{height:14px;border-radius:7px;background:var(--surface-2);overflow:hidden;direction:rtl}
 .dchart .track i{display:block;height:100%;background:var(--accent);border-radius:7px}
 .dchart .num{color:var(--ink-3);font-variant-numeric:tabular-nums;text-align:left}
+.sumcard{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin:8px 0}
+.sumcard>div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.sumcard small{color:var(--ink-3);font-size:11px}
+.sumcard b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sumcard span{font-size:13px;font-weight:700}
+.sgroup{padding:10px 0;border-bottom:1px solid var(--line)}
+.sgroup:last-child{border:0}
+.sgroup .sh{font-size:12.5px;color:var(--ink-3);margin-bottom:4px}
+.sgroup .sh b{color:var(--ink)}
+.sgroup ol{margin:0;padding-inline-start:22px;font-size:14px;line-height:1.9}
+.sgroup li::marker{color:var(--ink-3);font-size:12px}
 .dh{font-size:15px;margin:18px 0 2px}
 .irow{display:grid;grid-template-columns:minmax(0,1fr) 92px 56px 52px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
 .irow:last-child{border:0}
@@ -248,9 +259,10 @@ a{color:var(--accent)}
     <div class="chips" id="demCatChips"></div>
     <h3 class="dh">علاقه‌ی واقعی مردم</h3>
     <p class="legend">بازدید روزانه‌ی واقعی صفحه‌های ویکی‌پدیای مربوط به این دسته در ۶۰ روز اخیر. عدد = میانگین بازدید روزانه در ۷ روز اخیر؛ درصد = تغییر نسبت به هفته‌ی قبل.</p>
+    <div id="interestSum"></div>
     <div class="panel" id="interestBox"></div>
     <h3 class="dh">مردم دقیقاً چه جست‌وجو می‌کنند</h3>
-    <p class="legend">پیشنهادهای جست‌وجوی گوگل و یوتیوب برای کلمه‌های این دسته. هرچه بالاتر در فهرست پیشنهاد باشد (رتبه‌ی ۱ = پرجست‌وجوترین) و در هر دو جا دیده شود، تقاضا بیشتر است. <span class="new-dot">تازه</span> = به‌تازگی وارد پیشنهادها شده.</p>
+    <p class="legend">وقتی کسی یکی از کلمه‌های این دسته را در گوگل یا یوتیوب تایپ می‌کند، این‌ها پیشنهاد می‌شوند؛ بالاتر = پرجست‌وجوتر. اگر هر دو برچسب گوگل و یوتیوب را دارد، تقاضا قوی‌تر است. <span class="new-dot">تازه</span> = به‌تازگی وارد پیشنهادها شده.</p>
     <div class="chips" id="demLangChips"></div>
     <div class="panel" id="demandBox"></div>
   </section>
@@ -283,6 +295,7 @@ a{color:var(--accent)}
       <div class="sub" style="font-size:13px" id="connInfo"></div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn" id="themeBtn">تغییر حالت روشن/تاریک</button>
+        <span class="sub">نسخه‌ی اپ: ۵</span>
         <button class="btn danger" id="logoutBtn">حذف کلید از این گوشی</button>
       </div>
     </div>
@@ -565,21 +578,35 @@ function renderDemand(){
       ${spark(t.daily)}<span class="v">${fa(t.avg)}</span><span class="c ${cls}">${ch}</span></div>`;
   }).join("") : `<div class="empty" style="padding:16px">از نوبت بعدی رادار اینجا پر می‌شود.</div>`;
 
-  // Search phrases: Google + YouTube autocomplete.
+  // Summary: biggest movers this week.
+  const up = iRows.filter(t => t.ch != null && t.avg >= 5).sort((a, b) => b.ch - a.ch);
+  $("#interestSum").innerHTML = up.length ? `<div class="sumcard">
+      <div><small>بیشترین رشد این هفته</small><b dir="auto">${esc(up[0].title)}</b><span class="up">▲${fa(up[0].ch)}٪</span></div>
+      <div><small>پربازدیدترین</small><b dir="auto">${esc(iRows[0].title)}</b><span class="flat">${fa(iRows[0].avg)} در روز</span></div>
+      ${up.length > 1 && up[up.length-1].ch < 0 ? `<div><small>بیشترین افت</small><b dir="auto">${esc(up[up.length-1].title)}</b><span class="down">▼${fa(-up[up.length-1].ch)}٪</span></div>` : ""}
+    </div>` : "";
+
+  // Search phrases: Google + YouTube autocomplete, grouped by the word people typed.
   chips($("#demLangChips"), [["all","همه"],["fa","فارسی"],["en","انگلیسی"]], demLang, v => { demLang = v; renderDemand(); });
   const d = state.demand[state.demCat];
   const box = $("#demandBox");
   if(!d){ box.innerHTML = `<div class="empty" style="padding:24px">هنوز داده‌ای نیست.</div>`; return; }
   const all = Object.entries(d);
   const base = Math.min(...all.map(([, v]) => Date.parse(v.first)));
-  const strength = v => (11 - (v.rank || v.best_rank)) / 10 * ((v.src || []).length > 1 ? 1 : 0.75);
-  const rows = all.filter(([p]) => demLang === "all" || (demLang === "en") === /^[\x00-\x7F]+$/.test(p))
-    .sort((a, b) => strength(b[1]) - strength(a[1]) || b[1].hits - a[1].hits).slice(0, 25);
+  const groups = {};
+  for(const [p, v] of all){
+    const isEn = /^[\x00-\x7F]+$/.test(p);
+    if(demLang !== "all" && (demLang === "en") !== isEn) continue;
+    (groups[v.seed] ||= []).push([p, v]);
+  }
   const SRC = {g: "گوگل", yt: "یوتیوب"};
-  box.innerHTML = rows.length ? `<div class="dchart">${rows.map(([p, v]) => `
-    <span class="lbl" title="${esc(p)}" dir="auto">${esc(p)}${Date.parse(v.first) > base + 864e5 ? '<span class="new-dot">تازه</span>' : ""}${(v.src || []).map(x => `<span class="src">${SRC[x]}</span>`).join("")}</span>
-    <span class="track"><i style="width:${Math.max(6, strength(v) * 100)}%"></i></span>
-    <span class="num">#${fa(v.rank || v.best_rank)}</span>`).join("")}</div>` : `<div class="sub" style="padding:8px 0">چیزی نیست.</div>`;
+  const rank = v => v.rank || v.best_rank;
+  const seeds = Object.keys(groups).sort((a, b) => groups[b].length - groups[a].length);
+  box.innerHTML = seeds.length ? seeds.map(seed => {
+    const items = groups[seed].sort((a, b) => (b[1].src?.length || 0) - (a[1].src?.length || 0) || rank(a[1]) - rank(b[1])).slice(0, 8);
+    return `<div class="sgroup"><div class="sh">وقتی می‌نویسند «<b dir="auto">${esc(seed)}</b>»</div><ol>${items.map(([p, v]) => `
+      <li><span dir="auto">${esc(p)}</span>${Date.parse(v.first) > base + 864e5 ? '<span class="new-dot">تازه</span>' : ""}${(v.src || []).map(x => `<span class="src">${SRC[x]}</span>`).join("")}</li>`).join("")}</ol></div>`;
+  }).join("") : `<div class="sub" style="padding:8px 0">چیزی نیست.</div>`;
 }
 
 function renderCats(){
@@ -722,7 +749,11 @@ if("serviceWorker" in navigator){
   // When a new version is published, the new worker takes over and the page reloads once to show it.
   const hadController = !!navigator.serviceWorker.controller;
   navigator.serviceWorker.addEventListener("controllerchange", () => { if(hadController) location.reload(); });
-  navigator.serviceWorker.register("sw.js").then(r => r.update()).catch(() => {});
+  navigator.serviceWorker.register("sw.js").then(r => {
+    r.update();
+    // Phones keep the app open in the background: check for a new version and fresh data on return.
+    document.addEventListener("visibilitychange", () => { if(!document.hidden){ r.update().catch(() => {}); load(); } });
+  }).catch(() => {});
 }
 </script>
 </body>
