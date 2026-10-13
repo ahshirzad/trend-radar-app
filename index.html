@@ -718,7 +718,12 @@ const cached = LS.get("tr.cache", null);
 if(state.token && cached){ Object.assign(state, cached); hideSetup(); $("#tabs").classList.remove("hidden"); showTab(LS.get("tr.tab","ideas")); render(); }
 showTab(LS.get("tr.tab", "ideas"));
 load();
-if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+if("serviceWorker" in navigator){
+  // When a new version is published, the new worker takes over and the page reloads once to show it.
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if(hadController) location.reload(); });
+  navigator.serviceWorker.register("sw.js").then(r => r.update()).catch(() => {});
+}
 </script>
 </body>
 </html>
